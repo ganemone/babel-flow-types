@@ -1,6 +1,7 @@
 [ignore]
 
 [include]
+index.js
 
 [libs]
 

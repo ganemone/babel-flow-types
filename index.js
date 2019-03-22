@@ -243,9 +243,7 @@ export interface BabelTraversalContext {
 
 export type BabelContainer = Object | Array<Object>;
 
-export interface BabelPath<T> {
-  constructor(hub: BabelHub, parent: Object): BabelPath<T>,
-
+export type BabelPath<T> = {
   parent: Object,
   hub: BabelHub,
   contexts: Array<BabelTraversalContext>,
@@ -483,18 +481,20 @@ export interface BabelBinding {
 
 export type Template = (code: string, opts?: Object) => (opts: { [key: string]: Node }) => Node;
 
-export interface Comment {
+export type Comment = {
   value: string;
   start: number;
   end: number;
   loc: SourceLocation;
 }
 
-export interface CommentBlock extends Comment {
+export type CommentBlock = {
+  ...Comment,
   type: "CommentBlock";
 }
 
-export interface CommentLine extends Comment {
+export type CommentLine = {
+  ...Comment,
   type: "CommentLine";
 }
 
@@ -510,7 +510,7 @@ export interface SourceLocation {
   };
 }
 
-export interface BaseNode {
+export type BaseNode = {
   +type: string;
   leadingComments?: Array<Comment>;
   innerComments?: Array<Comment>;
@@ -520,104 +520,122 @@ export interface BaseNode {
   loc: SourceLocation;
 }
 
-export interface ArrayExpression extends BaseNode {
+export type ArrayExpression = { 
+  ...BaseNode,
   type: "ArrayExpression";
   elements: Array<Expression | SpreadElement>;
 }
 
-export interface AssignmentExpression extends BaseNode {
+export type AssignmentExpression = { 
+  ...BaseNode,
   type: "AssignmentExpression";
   operator: "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "|=" | "^=" | "&=";
   left: LVal;
   right: Expression;
 }
 
-export interface BinaryExpression extends BaseNode {
+export type BinaryExpression = { 
+  ...BaseNode,
   type: "BinaryExpression";
   operator: "+" | "-" | "/" | "%" | "*" | "**" | "&" | "|" | ">>" | ">>>" | "<<" | "^" | "==" | "===" | "!=" | "!==" | "in" | "instanceof" | ">" | "<" | ">=" | "<=";
   left: Expression;
   right: Expression;
 }
 
-export interface Directive extends BaseNode {
+export type Directive = { 
+  ...BaseNode,
   type: "Directive";
   value: DirectiveLiteral;
 }
 
-export interface DirectiveLiteral extends BaseNode {
+export type DirectiveLiteral = { 
+  ...BaseNode,
   type: "DirectiveLiteral";
   value: string;
 }
 
-export interface BlockStatement extends BaseNode {
+export type BlockStatement = { 
+  ...BaseNode,
   type: "BlockStatement";
   directives?: Directive[];
   body: Statement[];
 }
 
-export interface BreakStatement extends BaseNode {
+export type BreakStatement = { 
+  ...BaseNode,
   type: "BreakStatement";
   label: Identifier;
 }
 
-export interface CallExpression extends BaseNode {
+export type CallExpression = { 
+  ...BaseNode,
   type: "CallExpression";
   callee: Expression | Super;
   arguments: Array<Expression | SpreadElement>;
 }
 
-export interface CatchClause extends BaseNode {
+export type CatchClause = { 
+  ...BaseNode,
   type: "CatchClause";
   param: Identifier;
   body: BlockStatement;
 }
 
-export interface ConditionalExpression extends BaseNode {
+export type ConditionalExpression = { 
+  ...BaseNode,
   type: "ConditionalExpression";
   test: Expression;
   consequent: Expression;
   alternate: Expression;
 }
 
-export interface ContinueStatement extends BaseNode {
+export type ContinueStatement = { 
+  ...BaseNode,
   type: "ContinueStatement";
   label: Identifier;
 }
 
-export interface DebuggerStatement extends BaseNode {
+export type DebuggerStatement = { 
+  ...BaseNode,
   type: "DebuggerStatement";
 }
 
-export interface DoWhileStatement extends BaseNode {
+export type DoWhileStatement = { 
+  ...BaseNode,
   type: "DoWhileStatement";
   test: Expression;
   body: Statement;
 }
 
-export interface EmptyStatement extends BaseNode {
+export type EmptyStatement = { 
+  ...BaseNode,
   type: "EmptyStatement";
 }
 
-export interface ExpressionStatement extends BaseNode {
+export type ExpressionStatement = { 
+  ...BaseNode,
   type: "ExpressionStatement";
   expression: Expression;
 }
 
-export interface File extends BaseNode {
+export type File = { 
+  ...BaseNode,
   type: "File";
   program: Program;
   comments: Comment[];
   tokens: any[];
 }
 
-export interface ForInStatement extends BaseNode {
+export type ForInStatement = { 
+  ...BaseNode,
   type: "ForInStatement";
   left: VariableDeclaration | LVal;
   right: Expression;
   body: Statement;
 }
 
-export interface ForStatement extends BaseNode {
+export type ForStatement = { 
+  ...BaseNode,
   type: "ForStatement";
   init: VariableDeclaration | Expression;
   test: Expression;
@@ -625,7 +643,8 @@ export interface ForStatement extends BaseNode {
   body: Statement;
 }
 
-export interface FunctionDeclaration extends BaseNode {
+export type FunctionDeclaration = { 
+  ...BaseNode,
   type: "FunctionDeclaration";
   id: Identifier;
   params: Array<LVal>;
@@ -636,7 +655,8 @@ export interface FunctionDeclaration extends BaseNode {
   typeParameters?: TypeParameterDeclaration;
 }
 
-export interface FunctionExpression extends BaseNode {
+export type FunctionExpression = { 
+  ...BaseNode,
   type: "FunctionExpression";
   id: Identifier;
   params: Array<LVal>;
@@ -647,83 +667,97 @@ export interface FunctionExpression extends BaseNode {
   typeParameters?: TypeParameterDeclaration;
 }
 
-export interface Identifier extends BaseNode {
+export type Identifier = { 
+  ...BaseNode,
   type: "Identifier";
   name: string;
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface IfStatement extends BaseNode {
+export type IfStatement = { 
+  ...BaseNode,
   type: "IfStatement";
   test: Expression;
   consequent: Statement;
   alternate: Statement;
 }
 
-export interface LabeledStatement extends BaseNode {
+export type LabeledStatement = { 
+  ...BaseNode,
   type: "LabeledStatement";
   label: Identifier;
   body: Statement;
 }
 
-export interface StringLiteral extends BaseNode {
+export type StringLiteral = { 
+  ...BaseNode,
   type: "StringLiteral";
   value: string;
 }
 
-export interface NumericLiteral extends BaseNode {
+export type NumericLiteral = { 
+  ...BaseNode,
   type: "NumericLiteral";
   value: number;
 }
 
-export interface NullLiteral extends BaseNode {
+export type NullLiteral = { 
+  ...BaseNode,
   type: "NullLiteral";
 }
 
-export interface BooleanLiteral extends BaseNode {
+export type BooleanLiteral = { 
+  ...BaseNode,
   type: "BooleanLiteral";
   value: boolean;
 }
 
-export interface RegExpLiteral extends BaseNode {
+export type RegExpLiteral = { 
+  ...BaseNode,
   type: "RegExpLiteral";
   pattern: string;
   flags?: string;
 }
 
-export interface LogicalExpression extends BaseNode {
+export type LogicalExpression = { 
+  ...BaseNode,
   type: "LogicalExpression";
   operator: "||" | "&&";
   left: Expression;
   right: Expression;
 }
 
-export interface MemberExpression extends BaseNode {
+export type MemberExpression = { 
+  ...BaseNode,
   type: "MemberExpression";
   object: Expression | Super;
   property: Expression;
   computed: boolean;
 }
 
-export interface NewExpression extends BaseNode {
+export type NewExpression = { 
+  ...BaseNode,
   type: "NewExpression";
   callee: Expression | Super;
   arguments: Array<Expression | SpreadElement>;
 }
 
-export interface Program extends BaseNode {
+export type Program = { 
+  ...BaseNode,
   type: "Program";
   sourceType: "script" | "module";
   directives?: Directive[];
   body: Array<Statement | ModuleDeclaration>;
 }
 
-export interface ObjectExpression extends BaseNode {
+export type ObjectExpression = { 
+  ...BaseNode,
   type: "ObjectExpression";
   properties: Array<ObjectProperty | ObjectMethod | SpreadProperty>;
 }
 
-export interface ObjectMethod extends BaseNode {
+export type ObjectMethod = { 
+  ...BaseNode,
   type: "ObjectMethod";
   key: Expression;
   kind: "get" | "set" | "method";
@@ -740,7 +774,8 @@ export interface ObjectMethod extends BaseNode {
   typeParameters?: TypeParameterDeclaration;
 }
 
-export interface ObjectProperty extends BaseNode {
+export type ObjectProperty = { 
+  ...BaseNode,
   type: "ObjectProperty";
   key: Expression;
   computed: boolean;
@@ -749,101 +784,118 @@ export interface ObjectProperty extends BaseNode {
   shorthand: boolean;
 }
 
-export interface RestElement extends BaseNode {
+export type RestElement = { 
+  ...BaseNode,
   type: "RestElement";
   argument: LVal;
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface ReturnStatement extends BaseNode {
+export type ReturnStatement = { 
+  ...BaseNode,
   type: "ReturnStatement";
   argument: Expression;
 }
 
-export interface SequenceExpression extends BaseNode {
+export type SequenceExpression = { 
+  ...BaseNode,
   type: "SequenceExpression";
   expressions: Expression[];
 }
 
-export interface SwitchCase extends BaseNode {
+export type SwitchCase = { 
+  ...BaseNode,
   type: "SwitchCase";
   test: Expression;
   consequent: Statement[];
 }
 
-export interface SwitchStatement extends BaseNode {
+export type SwitchStatement = { 
+  ...BaseNode,
   type: "SwitchStatement";
   discriminant: Expression;
   cases: SwitchCase[];
 }
 
-export interface ThisExpression extends BaseNode {
+export type ThisExpression = { 
+  ...BaseNode,
   type: "ThisExpression";
 }
 
-export interface ThrowStatement extends BaseNode {
+export type ThrowStatement = { 
+  ...BaseNode,
   type: "ThrowStatement";
   argument: Expression;
 }
 
-export interface TryStatement extends BaseNode {
+export type TryStatement = { 
+  ...BaseNode,
   type: "TryStatement";
   block: BlockStatement;
   handler: CatchClause;
   finalizer: BlockStatement;
 }
 
-export interface UnaryExpression extends BaseNode {
+export type UnaryExpression = { 
+  ...BaseNode,
   type: "UnaryExpression";
   operator: "-" | "+" | "!" | "~" | "typeof" | "void" | "delete";
   prefix: boolean;
   argument: Expression;
 }
 
-export interface UpdateExpression extends BaseNode {
+export type UpdateExpression = { 
+  ...BaseNode,
   type: "UpdateExpression";
   operator: "++" | "--";
   prefix: boolean;
   argument: Expression;
 }
 
-export interface VariableDeclaration extends BaseNode {
+export type VariableDeclaration = { 
+  ...BaseNode,
   type: "VariableDeclaration";
   declarations: VariableDeclarator[];
   kind: "var" | "let" | "const";
 }
 
-export interface VariableDeclarator extends BaseNode {
+export type VariableDeclarator = { 
+  ...BaseNode,
   type: "VariableDeclarator";
   id: LVal;
   init: Expression;
 }
 
-export interface WhileStatement extends BaseNode {
+export type WhileStatement = { 
+  ...BaseNode,
   type: "WhileStatement";
   test: Expression;
   body: Statement;
 }
 
-export interface WithStatement extends BaseNode {
+export type WithStatement = { 
+  ...BaseNode,
   type: "WithStatement";
   object: Expression;
   body: BlockStatement | Statement;
 }
 
-export interface AssignmentPattern extends BaseNode {
+export type AssignmentPattern = { 
+  ...BaseNode,
   type: "AssignmentPattern";
   left: Identifier;
   right: Expression;
 }
 
-export interface ArrayPattern extends BaseNode {
+export type ArrayPattern = { 
+  ...BaseNode,
   type: "ArrayPattern";
   elements: Array<Expression>;
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface ArrowFunctionExpression extends BaseNode {
+export type ArrowFunctionExpression = { 
+  ...BaseNode,
   type: "ArrowFunctionExpression";
   id: Identifier;
   params: Array<LVal>;
@@ -855,12 +907,14 @@ export interface ArrowFunctionExpression extends BaseNode {
   typeParameters?: TypeParameterDeclaration;
 }
 
-export interface ClassBody extends BaseNode {
+export type ClassBody = { 
+  ...BaseNode,
   type: "ClassBody";
   body: Array<ClassMethod | ClassProperty>;
 }
 
-export interface ClassDeclaration extends BaseNode {
+export type ClassDeclaration = { 
+  ...BaseNode,
   type: "ClassDeclaration";
   id: Identifier;
   superClass: Expression;
@@ -872,7 +926,8 @@ export interface ClassDeclaration extends BaseNode {
   superTypeParameters?: TypeParameterInstantiation;
 }
 
-export interface ClassExpression extends BaseNode {
+export type ClassExpression = { 
+  ...BaseNode,
   type: "ClassExpression";
   id: Identifier;
   superClass: Expression;
@@ -884,66 +939,77 @@ export interface ClassExpression extends BaseNode {
   superTypeParameters?: TypeParameterInstantiation;
 }
 
-export interface ExportAllDeclaration extends BaseNode {
+export type ExportAllDeclaration = { 
+  ...BaseNode,
   type: "ExportAllDeclaration";
   source: StringLiteral;
 }
 
-export interface ExportDefaultDeclaration extends BaseNode {
+export type ExportDefaultDeclaration = { 
+  ...BaseNode,
   type: "ExportDefaultDeclaration";
   declaration: Declaration | Expression;
 }
 
-export interface ExportNamedDeclaration extends BaseNode {
+export type ExportNamedDeclaration = { 
+  ...BaseNode,
   type: "ExportNamedDeclaration";
   declaration: Declaration;
   specifiers: ExportSpecifier[];
   source: StringLiteral;
 }
 
-export interface ExportSpecifier extends BaseNode {
+export type ExportSpecifier = { 
+  ...BaseNode,
   type: "ExportSpecifier";
   local: Identifier;
   imported: Identifier;
   exported: Identifier;
 }
 
-export interface ForOfStatement extends BaseNode {
+export type ForOfStatement = { 
+  ...BaseNode,
   type: "ForOfStatement";
   left: VariableDeclaration | LVal;
   right: Expression;
   body: Statement;
 }
 
-export interface ImportDeclaration extends BaseNode {
+export type ImportDeclaration = { 
+  ...BaseNode,
   type: "ImportDeclaration";
   specifiers: Array<ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier>;
   source: StringLiteral;
 }
 
-export interface ImportDefaultSpecifier extends BaseNode {
+export type ImportDefaultSpecifier = { 
+  ...BaseNode,
   type: "ImportDefaultSpecifier";
   local: Identifier;
 }
 
-export interface ImportNamespaceSpecifier extends BaseNode {
+export type ImportNamespaceSpecifier = { 
+  ...BaseNode,
   type: "ImportNamespaceSpecifier";
   local: Identifier;
 }
 
-export interface ImportSpecifier extends BaseNode {
+export type ImportSpecifier = { 
+  ...BaseNode,
   type: "ImportSpecifier";
   local: Identifier;
   imported: Identifier;
 }
 
-export interface MetaProperty extends BaseNode {
+export type MetaProperty = { 
+  ...BaseNode,
   type: "MetaProperty";
   meta: Identifier;
   property: Identifier;
 }
 
-export interface ClassMethod extends BaseNode {
+export type ClassMethod = { 
+  ...BaseNode,
   type: "ClassMethod";
   key: Expression;
   value?: FunctionExpression;
@@ -962,7 +1028,8 @@ export interface ClassMethod extends BaseNode {
 }
 
 // See: https://github.com/babel/babel/blob/master/doc/ast/spec.md#objectpattern
-export interface AssignmentProperty extends BaseNode {
+export type AssignmentProperty = { 
+  ...BaseNode,
   type: "ObjectProperty";
   key: Expression;
   computed: boolean;
@@ -971,28 +1038,33 @@ export interface AssignmentProperty extends BaseNode {
   shorthand: boolean;
 }
 
-export interface ObjectPattern extends BaseNode {
+export type ObjectPattern = { 
+  ...BaseNode,
   type: "ObjectPattern";
   properties: Array<AssignmentProperty | RestProperty>;
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface SpreadElement extends BaseNode {
+export type SpreadElement = { 
+  ...BaseNode,
   type: "SpreadElement";
   argument: Expression;
 }
 
-export interface Super extends BaseNode {
+export type Super = { 
+  ...BaseNode,
   type: "Super";
 }
 
-export interface TaggedTemplateExpression extends BaseNode {
+export type TaggedTemplateExpression = { 
+  ...BaseNode,
   type: "TaggedTemplateExpression";
   tag: Expression;
   quasi: TemplateLiteral;
 }
 
-export interface TemplateElement extends BaseNode {
+export type TemplateElement = { 
+  ...BaseNode,
   type: "TemplateElement";
   tail: boolean;
   value: {
@@ -1001,46 +1073,55 @@ export interface TemplateElement extends BaseNode {
   };
 }
 
-export interface TemplateLiteral extends BaseNode {
+export type TemplateLiteral = { 
+  ...BaseNode,
   type: "TemplateLiteral";
   quasis: TemplateElement[];
   expressions: Expression[];
 }
 
-export interface YieldExpression extends BaseNode {
+export type YieldExpression = { 
+  ...BaseNode,
   type: "YieldExpression";
   argument: Expression;
   delegate: boolean;
 }
 
-export interface AnyTypeAnnotation extends BaseNode {
+export type AnyTypeAnnotation = { 
+  ...BaseNode,
   type: "AnyTypeAnnotation";
 }
 
-export interface ArrayTypeAnnotation extends BaseNode {
+export type ArrayTypeAnnotation = { 
+  ...BaseNode,
   type: "ArrayTypeAnnotation";
   elementType: FlowTypeAnnotation;
 }
 
-export interface BooleanTypeAnnotation extends BaseNode {
+export type BooleanTypeAnnotation = { 
+  ...BaseNode,
   type: "BooleanTypeAnnotation";
 }
 
-export interface BooleanLiteralTypeAnnotation extends BaseNode {
+export type BooleanLiteralTypeAnnotation = { 
+  ...BaseNode,
   type: "BooleanLiteralTypeAnnotation";
 }
 
-export interface NullLiteralTypeAnnotation extends BaseNode {
+export type NullLiteralTypeAnnotation = { 
+  ...BaseNode,
   type: "NullLiteralTypeAnnotation";
 }
 
-export interface ClassImplements extends BaseNode {
+export type ClassImplements = { 
+  ...BaseNode,
   type: "ClassImplements";
   id: Identifier;
   typeParameters: TypeParameterInstantiation;
 }
 
-export interface ClassProperty extends BaseNode {
+export type ClassProperty = { 
+  ...BaseNode,
   type: "ClassProperty";
   key: Identifier;
   value: Expression;
@@ -1048,7 +1129,8 @@ export interface ClassProperty extends BaseNode {
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface DeclareClass extends BaseNode {
+export type DeclareClass = { 
+  ...BaseNode,
   type: "DeclareClass";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
@@ -1056,12 +1138,14 @@ export interface DeclareClass extends BaseNode {
   body: ObjectTypeAnnotation;
 }
 
-export interface DeclareFunction extends BaseNode {
+export type DeclareFunction = { 
+  ...BaseNode,
   type: "DeclareFunction";
   id: Identifier;
 }
 
-export interface DeclareInterface extends BaseNode {
+export type DeclareInterface = { 
+  ...BaseNode,
   type: "DeclareInterface";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
@@ -1069,29 +1153,34 @@ export interface DeclareInterface extends BaseNode {
   body: ObjectTypeAnnotation;
 }
 
-export interface DeclareModule extends BaseNode {
+export type DeclareModule = { 
+  ...BaseNode,
   type: "DeclareModule";
   id: StringLiteral | Identifier;
   body: BlockStatement;
 }
 
-export interface DeclareTypeAlias extends BaseNode {
+export type DeclareTypeAlias = { 
+  ...BaseNode,
   type: "DeclareTypeAlias";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
   right: FlowTypeAnnotation;
 }
 
-export interface DeclareVariable extends BaseNode {
+export type DeclareVariable = { 
+  ...BaseNode,
   type: "DeclareVariable";
   id: Identifier;
 }
 
-export interface ExistentialTypeParam extends BaseNode {
+export type ExistentialTypeParam = { 
+  ...BaseNode,
   type: "ExistentialTypeParam";
 }
 
-export interface FunctionTypeAnnotation extends BaseNode {
+export type FunctionTypeAnnotation = { 
+  ...BaseNode,
   type: "FunctionTypeAnnotation";
   typeParameters: TypeParameterDeclaration;
   params: FunctionTypeParam[];
@@ -1099,25 +1188,29 @@ export interface FunctionTypeAnnotation extends BaseNode {
   returnType: FlowTypeAnnotation;
 }
 
-export interface FunctionTypeParam extends BaseNode {
+export type FunctionTypeParam = { 
+  ...BaseNode,
   type: "FunctionTypeParam";
   name: Identifier;
   typeAnnotation: FlowTypeAnnotation;
 }
 
-export interface GenericTypeAnnotation extends BaseNode {
+export type GenericTypeAnnotation = { 
+  ...BaseNode,
   type: "GenericTypeAnnotation";
   id: Identifier;
   typeParameters: TypeParameterInstantiation;
 }
 
-export interface InterfaceExtends extends BaseNode {
+export type InterfaceExtends = { 
+  ...BaseNode,
   type: "InterfaceExtends";
   id: Identifier;
   typeParameters: TypeParameterInstantiation;
 }
 
-export interface InterfaceDeclaration extends BaseNode {
+export type InterfaceDeclaration = { 
+  ...BaseNode,
   type: "InterfaceDeclaration";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
@@ -1126,130 +1219,155 @@ export interface InterfaceDeclaration extends BaseNode {
   body: ObjectTypeAnnotation;
 }
 
-export interface IntersectionTypeAnnotation extends BaseNode {
+export type IntersectionTypeAnnotation = { 
+  ...BaseNode,
   type: "IntersectionTypeAnnotation";
   types: FlowTypeAnnotation[];
 }
 
-export interface MixedTypeAnnotation extends BaseNode {
+export type MixedTypeAnnotation = { 
+  ...BaseNode,
   type: "MixedTypeAnnotation";
 }
 
-export interface NullableTypeAnnotation extends BaseNode {
+export type NullableTypeAnnotation = { 
+  ...BaseNode,
   type: "NullableTypeAnnotation";
   typeAnnotation: FlowTypeAnnotation;
 }
 
-export interface NumericLiteralTypeAnnotation extends BaseNode {
+export type NumericLiteralTypeAnnotation = { 
+  ...BaseNode,
   type: "NumericLiteralTypeAnnotation";
 }
 
-export interface NumberTypeAnnotation extends BaseNode {
+export type NumberTypeAnnotation = { 
+  ...BaseNode,
   type: "NumberTypeAnnotation";
 }
 
-export interface StringLiteralTypeAnnotation extends BaseNode {
+export type StringLiteralTypeAnnotation = { 
+  ...BaseNode,
   type: "StringLiteralTypeAnnotation";
 }
 
-export interface StringTypeAnnotation extends BaseNode {
+export type StringTypeAnnotation = { 
+  ...BaseNode,
   type: "StringTypeAnnotation";
 }
 
-export interface ThisTypeAnnotation extends BaseNode {
+export type ThisTypeAnnotation = { 
+  ...BaseNode,
   type: "ThisTypeAnnotation";
 }
 
-export interface TupleTypeAnnotation extends BaseNode {
+export type TupleTypeAnnotation = { 
+  ...BaseNode,
   type: "TupleTypeAnnotation";
   types: FlowTypeAnnotation[];
 }
 
-export interface TypeofTypeAnnotation extends BaseNode {
+export type TypeofTypeAnnotation = { 
+  ...BaseNode,
   type: "TypeofTypeAnnotation";
   argument: FlowTypeAnnotation;
 }
 
-export interface TypeAlias extends BaseNode {
+export type TypeAlias = { 
+  ...BaseNode,
   type: "TypeAlias";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
   right: FlowTypeAnnotation;
 }
 
-export interface TypeAnnotation extends BaseNode {
+export type TypeAnnotation = { 
+  ...BaseNode,
   type: "TypeAnnotation";
   typeAnnotation: FlowTypeAnnotation;
 }
 
-export interface TypeCastExpression extends BaseNode {
+export type TypeCastExpression = { 
+  ...BaseNode,
   type: "TypeCastExpression";
   expression: Expression;
   typeAnnotation: FlowTypeAnnotation;
 }
 
-export interface TypeParameterDeclaration extends BaseNode {
+export type TypeParameterDeclaration = { 
+  ...BaseNode,
   type: "TypeParameterDeclaration";
   params: Identifier[];
 }
 
-export interface TypeParameterInstantiation extends BaseNode {
+export type TypeParameterInstantiation = { 
+  ...BaseNode,
   type: "TypeParameterInstantiation";
   params: FlowTypeAnnotation[];
 }
 
-export interface ObjectTypeAnnotation extends BaseNode {
+export type ObjectTypeAnnotation = { 
+  ...BaseNode,
   type: "ObjectTypeAnnotation";
   properties: ObjectTypeProperty[];
   indexers: ObjectTypeIndexer[];
   callProperties: ObjectTypeCallProperty[];
 }
 
-export interface ObjectTypeCallProperty extends BaseNode {
+export type ObjectTypeCallProperty = { 
+  ...BaseNode,
   type: "ObjectTypeCallProperty";
   value: FlowTypeAnnotation;
 }
 
-export interface ObjectTypeIndexer extends BaseNode {
+export type ObjectTypeIndexer = { 
+  ...BaseNode,
   type: "ObjectTypeIndexer";
   id: Expression;
   key: FlowTypeAnnotation;
   value: FlowTypeAnnotation;
 }
 
-export interface ObjectTypeProperty extends BaseNode {
+export type ObjectTypeProperty = { 
+  ...BaseNode,
   type: "ObjectTypeProperty";
   key: Expression;
   value: FlowTypeAnnotation;
 }
 
-export interface QualifiedTypeIdentifier extends BaseNode {
+export type QualifiedTypeIdentifier = { 
+  ...BaseNode,
   type: "QualifiedTypeIdentifier";
   id: Identifier;
   qualification: Identifier | QualifiedTypeIdentifier;
 }
 
-export interface UnionTypeAnnotation extends BaseNode {
+export type UnionTypeAnnotation = { 
+  ...BaseNode,
   type: "UnionTypeAnnotation";
   types: FlowTypeAnnotation[];
 }
 
-export interface VoidTypeAnnotation extends BaseNode {
+export type VoidTypeAnnotation = { 
+  ...BaseNode,
   type: "VoidTypeAnnotation";
 }
 
-export interface JSXAttribute extends BaseNode {
+export type JSXAttribute = { 
+  ...BaseNode,
   type: "JSXAttribute";
   name: JSXIdentifier | JSXNamespacedName;
   value: JSXElement | StringLiteral | JSXExpressionContainer;
 }
 
-export interface JSXClosingElement extends BaseNode {
+export type JSXClosingElement = { 
+  ...BaseNode,
   type: "JSXClosingElement";
   name: JSXIdentifier | JSXMemberExpression;
 }
 
-export interface JSXElement extends BaseNode {
+export type JSXElement = { 
+  ...BaseNode,
   type: "JSXElement";
   openingElement: JSXOpeningElement;
   closingElement: JSXClosingElement;
@@ -1257,95 +1375,113 @@ export interface JSXElement extends BaseNode {
   selfClosing?: boolean;
 }
 
-export interface JSXEmptyExpression extends BaseNode {
+export type JSXEmptyExpression = { 
+  ...BaseNode,
   type: "JSXEmptyExpression";
 }
 
-export interface JSXExpressionContainer extends BaseNode {
+export type JSXExpressionContainer = { 
+  ...BaseNode,
   type: "JSXExpressionContainer";
   expression: Expression;
 }
 
-export interface JSXIdentifier extends BaseNode {
+export type JSXIdentifier = { 
+  ...BaseNode,
   type: "JSXIdentifier";
   name: string;
 }
 
-export interface JSXMemberExpression extends BaseNode {
+export type JSXMemberExpression = { 
+  ...BaseNode,
   type: "JSXMemberExpression";
   object: JSXMemberExpression | JSXIdentifier;
   property: JSXIdentifier;
 }
 
-export interface JSXNamespacedName extends BaseNode {
+export type JSXNamespacedName = { 
+  ...BaseNode,
   type: "JSXNamespacedName";
   namespace: JSXIdentifier;
   name: JSXIdentifier;
 }
 
-export interface JSXOpeningElement extends BaseNode {
+export type JSXOpeningElement = { 
+  ...BaseNode,
   type: "JSXOpeningElement";
   name: JSXIdentifier | JSXMemberExpression;
   selfClosing: boolean;
   attributes: JSXAttribute[];
 }
 
-export interface JSXSpreadAttribute extends BaseNode {
+export type JSXSpreadAttribute = { 
+  ...BaseNode,
   type: "JSXSpreadAttribute";
   argument: Expression;
 }
 
-export interface JSXText extends BaseNode {
+export type JSXText = { 
+  ...BaseNode,
   type: "JSXText";
   value: string;
 }
 
-export interface Noop extends BaseNode {
+export type Noop = { 
+  ...BaseNode,
   type: "Noop";
 }
 
-export interface ParenthesizedExpression extends BaseNode {
+export type ParenthesizedExpression = { 
+  ...BaseNode,
   type: "ParenthesizedExpression";
   expression: Expression;
 }
 
-export interface AwaitExpression extends BaseNode {
+export type AwaitExpression = { 
+  ...BaseNode,
   type: "AwaitExpression";
   argument: Expression;
 }
 
-export interface BindExpression extends BaseNode {
+export type BindExpression = { 
+  ...BaseNode,
   type: "BindExpression";
   object: Expression;
   callee: Expression;
 }
 
-export interface Decorator extends BaseNode {
+export type Decorator = { 
+  ...BaseNode,
   type: "Decorator";
   expression: Expression;
 }
 
-export interface DoExpression extends BaseNode {
+export type DoExpression = { 
+  ...BaseNode,
   type: "DoExpression";
   body: BlockStatement;
 }
 
-export interface ExportDefaultSpecifier extends BaseNode {
+export type ExportDefaultSpecifier = { 
+  ...BaseNode,
   type: "ExportDefaultSpecifier";
   exported: Identifier;
 }
 
-export interface ExportNamespaceSpecifier extends BaseNode {
+export type ExportNamespaceSpecifier = { 
+  ...BaseNode,
   type: "ExportNamespaceSpecifier";
   exported: Identifier;
 }
 
-export interface RestProperty extends BaseNode {
+export type RestProperty = { 
+  ...BaseNode,
   type: "RestProperty";
   argument: LVal;
 }
 
-export interface SpreadProperty extends BaseNode {
+export type SpreadProperty = { 
+  ...BaseNode,
   type: "SpreadProperty";
   argument: Expression;
 }
