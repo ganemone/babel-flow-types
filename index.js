@@ -349,8 +349,8 @@ export type BabelPath<T> = {
 
   remove(): void,
 
-  insertBefore(nodes: Node || Array<Node>): Array<BabelPath<Node>>,
-  insertAfter(nodes: Node || Array<Node>): Array<BabelPath<Node>>,
+  insertBefore(nodes: Node | Array<Node>): Array<BabelPath<Node>>,
+  insertAfter(nodes: Node | Array<Node>): Array<BabelPath<Node>>,
   updateSiblingKeys(fromIndex: number, incrementBy: number): void,
   unshiftContainer(listKey: string, nodes: Array<Node>): Array<BabelPath<Node>>,
   pushContainer(listKey: string, nodes: Array<Node>): void,
