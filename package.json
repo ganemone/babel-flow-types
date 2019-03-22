@@ -10,6 +10,9 @@
     "index.js"
   ],
   "devDependencies": {
-    "flow-bin": "^0.49.1"
+    "flow-bin": "^0.95.1"
+  },
+  "scripts": {
+    "flow": "flow check"
   }
 }

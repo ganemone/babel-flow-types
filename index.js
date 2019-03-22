@@ -1,5 +1,4 @@
 // @flow
-/*::
 export type BabelFileResult = {
   ast?: ?Object,
   code?: ?string,
@@ -121,7 +120,7 @@ export interface BabelFile extends BabelStore {
   shebang: string,
   metadata: BabelFileMetadata,
 
-  path: BabelPath,
+  path: BabelPath<Node>,
   scope: BabelScope,
 
   hub: BabelHub,
@@ -187,16 +186,16 @@ export type Babel = {
 };
 
 export interface BabelTraverse {
-  (parent: Object | Array<Object>, opts?: Object, scope?: BabelScope, state: BabelPluginPass, parentPath: BabelPath): void,
+  (parent: Object | Array<Object>, opts?: Object, scope?: BabelScope, state: BabelPluginPass, parentPath: BabelPath<Node>): void,
   visitors: BabelVisitors,
   verify: BabelVisitorVerify,
   explode: BabelVisitorExplode,
-  NodePath: Class<BabelPath>,
+  NodePath: Class<BabelPath<Node>>,
   Scope: Class<BabelScope>,
   Hub: Class<BabelHub>,
 
   cheap(node: Node, enter: (node: Node) => void): void,
-  node(node: Node, opts: Object, scope: BabelScope, state: BabelPluginPass, parentPath: BabelPath, shipKeys?: Object): void,
+  node(node: Node, opts: Object, scope: BabelScope, state: BabelPluginPass, parentPath: BabelPath<Node>, shipKeys?: Object): void,
   clearNode(node: Node, opts: Object): void,
   removeProperties(tree: Node, opts: Object): Node,
   hasType(tree: Node, scope: BabelScope, type: Object, blacklistTypes: Array<string>): boolean,
@@ -204,7 +203,7 @@ export interface BabelTraverse {
   copyCache(source: Object, destination: Object): void,
 }
 
-export type BabelVisitorMethod = (path: BabelPath, state: BabelPluginPass) => mixed;
+export type BabelVisitorMethod = (path: BabelPath<Node>, state: BabelPluginPass) => mixed;
 
 export type BabelVisitor = {
   [key: string]: { enter?: BabelVisitorMethod, exit?: BabelVisitorMethod } | BabelVisitorMethod,
@@ -226,26 +225,26 @@ export interface BabelHub {
 }
 
 export interface BabelTraversalContext {
-  constructor(scope: BabelScope, opts: Object, state: BabelPluginPass, parentPath: BabelPath): BabelTraversalContext,
-  parentPath: BabelPath,
+  constructor(scope: BabelScope, opts: Object, state: BabelPluginPass, parentPath: BabelPath<Node>): BabelTraversalContext,
+  parentPath: BabelPath<Node>,
   scope: BabelScope,
   state: BabelPluginPass,
   opts: Object,
-  queue: ?Array<BabelPath>,
+  queue: ?Array<BabelPath<Node>>,
 
   shouldVisit(node: Node): boolean,
-  create(node: Node, obj: ?Array<Node>, key: string, listKey: string): BabelPath,
-  maybeQueue(path: BabelPath, notPriority?: boolean): void,
+  create(node: Node, obj: ?Array<Node>, key: string, listKey: string): BabelPath<Node>,
+  maybeQueue(path: BabelPath<Node>, notPriority?: boolean): void,
   visitMultipe(container: Array<Node>, parent: Node, listKey: string): boolean,
   visitSingle(node: Node, key: string): boolean,
-  visitQueue(queue: Array<BabelPath>): boolean,
+  visitQueue(queue: Array<BabelPath<Node>>): boolean,
   visit(node: Node | Array<Node>, key: string): boolean,
 }
 
 export type BabelContainer = Object | Array<Object>;
 
-export interface BabelPath {
-  constructor(hub: BabelHub, parent: Object): BabelPath,
+export interface BabelPath<T> {
+  constructor(hub: BabelHub, parent: Object): BabelPath<T>,
 
   parent: Object,
   hub: BabelHub,
@@ -257,7 +256,7 @@ export interface BabelPath {
   state: BabelPluginPass,
   opts: ?Object,
   skipKeys: ?Object,
-  parentPath: BabelPath,
+  parentPath: BabelPath<Node>,
   context: BabelTraversalContext,
   container: ?BabelContainer,
   listKey: ?string,
@@ -271,12 +270,12 @@ export interface BabelPath {
 
   // static get(opts: {
   //   hub: BabelHub,
-  //   parentPath?: BabelPath,
+  //   parentPath?: BabelPath<Node>,
   //   parent?: Node,
   //   container?: ?BabelContainer,
   //   listKey?: string,
   //   key?: string,
-  // }): BabelPath,
+  // }): BabelPath<Node>,
 
   getScope(scope: BabelScope): BabelScope,
   setData(key: string, val: any): any,
@@ -289,22 +288,22 @@ export interface BabelPath {
   getPathLocation(): string,
   debug(buildMessage: Function): void,
 
-  findParent(callback: (path: BabelPath) => boolean): BabelPath | null,
-  find(callback: (path: BabelPath) => boolean): BabelPath | null,
-  getFunctionParent(): BabelPath,
-  getStatementParent(): BabelPath,
-  getEarliestCommonAncestorFrom(paths: Array<BabelPath>): BabelPath,
-  getDeepestCommonAncestorFrom(paths: Array<BabelPath>, filter?: Function): BabelPath,
-  getAncestry(): Array<BabelPath>,
-  isAncestor(maybeDescendant: BabelPath): boolean,
-  isDescendant(maybeAncestor: BabelPath): boolean,
+  findParent(callback: (path: BabelPath<Node>) => boolean): BabelPath<Node> | null,
+  find(callback: (path: BabelPath<Node>) => boolean): BabelPath<Node> | null,
+  getFunctionParent(): BabelPath<Node>,
+  getStatementParent(): BabelPath<Node>,
+  getEarliestCommonAncestorFrom(paths: Array<BabelPath<Node>>): BabelPath<Node>,
+  getDeepestCommonAncestorFrom(paths: Array<BabelPath<Node>>, filter?: Function): BabelPath<Node>,
+  getAncestry(): Array<BabelPath<Node>>,
+  isAncestor(maybeDescendant: BabelPath<Node>): boolean,
+  isDescendant(maybeAncestor: BabelPath<Node>): boolean,
   inType(...types: Array<string>): boolean,
   inShadow(key?: string): ?boolean,
 
   getTypeAnnotation(): Node,
   isBaseType(baseName: string, soft?: boolean): boolean,
   couldBeBaseType(name: string): boolean,
-  baseTypeStrictlyMatches(right: BabelPath): ?boolean,
+  baseTypeStrictlyMatches(right: BabelPath<Node>): ?boolean,
   isGenericType(genericName: string): boolean,
 
   replaceWithMultiple(node: Array<Node>): void,
@@ -333,8 +332,8 @@ export interface BabelPath {
   isStatementOrBlock(): boolean,
   referencesImport(moduleSource: string, importName: string): boolean,
   getSource(): string,
-  willIMaybeExecuteBefore(target: BabelPath): boolean,
-  resolve(dangerous?: boolean, resolved?: Array<BabelPath>): BabelPath,
+  willIMaybeExecuteBefore(target: BabelPath<Node>): boolean,
+  resolve(dangerous?: boolean, resolved?: Array<BabelPath<Node>>): BabelPath<Node>,
 
   call(key: string): boolean,
   isBlackListed(): boolean,
@@ -343,35 +342,35 @@ export interface BabelPath {
   skipKey(key: string): void,
   stop(): void,
   setScope(): void,
-  setContext(context: Object): BabelPath,
+  setContext(context: Object): BabelPath<Node>,
   resync(): void,
   popContext(): void,
   pushContext(context: Object): void,
-  setup(parentPath: ?BabelPath, container: ?BabelContainer, listKey: ?string, key: ?string): void,
-  requeue(pathToQueue?: BabelPath): void,
+  setup(parentPath: ?BabelPath<Node>, container: ?BabelContainer, listKey: ?string, key: ?string): void,
+  requeue(pathToQueue?: BabelPath<Node>): void,
 
   remove(): void,
 
-  insertBefore(nodes: Array<Node>): Array<BabelPath>,
-  insertAfter(nodes: Array<Node>): Array<BabelPath>,
+  insertBefore(nodes: Array<Node>): Array<BabelPath<Node>>,
+  insertAfter(nodes: Array<Node>): Array<BabelPath<Node>>,
   updateSiblingKeys(fromIndex: number, incrementBy: number): void,
-  unshiftContainer(listKey: string, nodes: Array<Node>): Array<BabelPath>,
+  unshiftContainer(listKey: string, nodes: Array<Node>): Array<BabelPath<Node>>,
   pushContainer(listKey: string, nodes: Array<Node>): void,
   hoist(scope?: BabelScope): void,
 
-  getStatementParent(): ?BabelPath,
-  getOpposite(): ?BabelPath,
-  getCompletionRecord(): Array<BabelPath>,
-  getSibling(key: string): ?BabelPath,
-  getPrevSibling(): ?BabelPath,
-  getNextSibling(): ?BabelPath,
-  getAllNextSiblings(): Array<BabelPath>,
-  getAllPrevSiblings(): Array<BabelPath>,
+  getStatementParent(): ?BabelPath<Node>,
+  getOpposite(): ?BabelPath<Node>,
+  getCompletionRecord(): Array<BabelPath<Node>>,
+  getSibling(key: string): ?BabelPath<Node>,
+  getPrevSibling(): ?BabelPath<Node>,
+  getNextSibling(): ?BabelPath<Node>,
+  getAllNextSiblings(): Array<BabelPath<Node>>,
+  getAllPrevSiblings(): Array<BabelPath<Node>>,
   get(key: string, context?: boolean | BabelTraversalContext): any,
   getBindingIdentifiers(duplicates?: boolean): { [key: string]: Identifier },
   getOuterBindingIdentifiers(duplicates?: boolean): { [key: string]: Identifier },
-  getBindingIdentifierPaths(duplicates?: boolean, outerOnly?: boolean): { [key: string]: BabelPath },
-  getOuterBindingIdentifierPaths(duplicates?: boolean): { [key: string]: BabelPath },
+  getBindingIdentifierPaths(duplicates?: boolean, outerOnly?: boolean): { [key: string]: BabelPath<Node> },
+  getOuterBindingIdentifierPaths(duplicates?: boolean): { [key: string]: BabelPath<Node> },
 
   shareCommentsWithSiblings(): void,
   addComment(type: string, content: string, line?: boolean): void,
@@ -379,15 +378,15 @@ export interface BabelPath {
 }
 
 export interface BabelScope {
-  constructor(path: BabelPath, parentScope?: BabelScope): BabelScope,
+  constructor(path: BabelPath<Node>, parentScope?: BabelScope): BabelScope,
 
   uid: number,
   parent: ?BabelScope,
   hub: BabelHub,
   parentBlock: Node,
   block: Node,
-  path: BabelPath,
-  labels: Map<string, BabelPath>,
+  path: BabelPath<Node>,
+  labels: Map<string, BabelPath<Node>>,
 
   // static globals: Array<string>,
   // static contextVariables: Array<string>,
@@ -404,12 +403,12 @@ export interface BabelScope {
   dump(): void,
   toArray(node: Node, i?: number): Node,
   hasLabel(name: string): boolean,
-  getLabel(name: string): BabelPath,
-  registerLabel(path: BabelPath): void,
-  registerDeclaration(path: BabelPath): void,
+  getLabel(name: string): BabelPath<Node>,
+  registerLabel(path: BabelPath<Node>): void,
+  registerDeclaration(path: BabelPath<Node>): void,
   buildUndefinedNode(): Node,
-  registerConstantViolation(path: BabelPath): void,
-  registerBinding(kind: string, path: BabelPath, bindingPath?: BabelPath): void,
+  registerConstantViolation(path: BabelPath<Node>): void,
+  registerBinding(kind: string, path: BabelPath<Node>, bindingPath?: BabelPath<Node>): void,
   addGlobal(node: Object): void,
   hasUid(name: string): boolean,
   hasGlobal(name: string): boolean,
@@ -451,7 +450,7 @@ type BabelBindingOptions = {
   existing?: boolean,
   identifier: Node,
   scope: BabelScope,
-  path: BabelPath,
+  path: BabelPath<Node>,
   kind: BabelBindingKind,
 }
 
@@ -460,13 +459,13 @@ export interface BabelBinding {
 
   identifier: Node,
   scope: BabelScope,
-  path: BabelPath,
+  path: BabelPath<Node>,
   kind: BabelBindingKind,
 
-  constantViolations: Array<BabelPath>,
+  constantViolations: Array<BabelPath<Node>>,
   constant: boolean,
 
-  referencePaths: Array<BabelPath>,
+  referencePaths: Array<BabelPath<Node>>,
   referenced: boolean,
   references: number,
 
@@ -477,8 +476,8 @@ export interface BabelBinding {
   deoptValue(): void,
   setValue(value: any): void,
   clearValue(): void,
-  reassign(path: BabelPath): void,
-  reference(path: BabelPath): void,
+  reassign(path: BabelPath<Node>): void,
+  reference(path: BabelPath<Node>): void,
   dereference(): void,
 }
 
@@ -511,7 +510,7 @@ export interface SourceLocation {
   };
 }
 
-export interface Node {
+export interface BaseNode {
   +type: string;
   leadingComments?: Array<Comment>;
   innerComments?: Array<Comment>;
@@ -521,104 +520,104 @@ export interface Node {
   loc: SourceLocation;
 }
 
-export interface ArrayExpression extends Node {
+export interface ArrayExpression extends BaseNode {
   type: "ArrayExpression";
   elements: Array<Expression | SpreadElement>;
 }
 
-export interface AssignmentExpression extends Node {
+export interface AssignmentExpression extends BaseNode {
   type: "AssignmentExpression";
   operator: "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "|=" | "^=" | "&=";
   left: LVal;
   right: Expression;
 }
 
-export interface BinaryExpression extends Node {
+export interface BinaryExpression extends BaseNode {
   type: "BinaryExpression";
   operator: "+" | "-" | "/" | "%" | "*" | "**" | "&" | "|" | ">>" | ">>>" | "<<" | "^" | "==" | "===" | "!=" | "!==" | "in" | "instanceof" | ">" | "<" | ">=" | "<=";
   left: Expression;
   right: Expression;
 }
 
-export interface Directive extends Node {
+export interface Directive extends BaseNode {
   type: "Directive";
   value: DirectiveLiteral;
 }
 
-export interface DirectiveLiteral extends Node {
+export interface DirectiveLiteral extends BaseNode {
   type: "DirectiveLiteral";
   value: string;
 }
 
-export interface BlockStatement extends Node {
+export interface BlockStatement extends BaseNode {
   type: "BlockStatement";
   directives?: Directive[];
   body: Statement[];
 }
 
-export interface BreakStatement extends Node {
+export interface BreakStatement extends BaseNode {
   type: "BreakStatement";
   label: Identifier;
 }
 
-export interface CallExpression extends Node {
+export interface CallExpression extends BaseNode {
   type: "CallExpression";
   callee: Expression | Super;
   arguments: Array<Expression | SpreadElement>;
 }
 
-export interface CatchClause extends Node {
+export interface CatchClause extends BaseNode {
   type: "CatchClause";
   param: Identifier;
   body: BlockStatement;
 }
 
-export interface ConditionalExpression extends Node {
+export interface ConditionalExpression extends BaseNode {
   type: "ConditionalExpression";
   test: Expression;
   consequent: Expression;
   alternate: Expression;
 }
 
-export interface ContinueStatement extends Node {
+export interface ContinueStatement extends BaseNode {
   type: "ContinueStatement";
   label: Identifier;
 }
 
-export interface DebuggerStatement extends Node {
+export interface DebuggerStatement extends BaseNode {
   type: "DebuggerStatement";
 }
 
-export interface DoWhileStatement extends Node {
+export interface DoWhileStatement extends BaseNode {
   type: "DoWhileStatement";
   test: Expression;
   body: Statement;
 }
 
-export interface EmptyStatement extends Node {
+export interface EmptyStatement extends BaseNode {
   type: "EmptyStatement";
 }
 
-export interface ExpressionStatement extends Node {
+export interface ExpressionStatement extends BaseNode {
   type: "ExpressionStatement";
   expression: Expression;
 }
 
-export interface File extends Node {
+export interface File extends BaseNode {
   type: "File";
   program: Program;
   comments: Comment[];
   tokens: any[];
 }
 
-export interface ForInStatement extends Node {
+export interface ForInStatement extends BaseNode {
   type: "ForInStatement";
   left: VariableDeclaration | LVal;
   right: Expression;
   body: Statement;
 }
 
-export interface ForStatement extends Node {
+export interface ForStatement extends BaseNode {
   type: "ForStatement";
   init: VariableDeclaration | Expression;
   test: Expression;
@@ -626,7 +625,7 @@ export interface ForStatement extends Node {
   body: Statement;
 }
 
-export interface FunctionDeclaration extends Node {
+export interface FunctionDeclaration extends BaseNode {
   type: "FunctionDeclaration";
   id: Identifier;
   params: Array<LVal>;
@@ -637,7 +636,7 @@ export interface FunctionDeclaration extends Node {
   typeParameters?: TypeParameterDeclaration;
 }
 
-export interface FunctionExpression extends Node {
+export interface FunctionExpression extends BaseNode {
   type: "FunctionExpression";
   id: Identifier;
   params: Array<LVal>;
@@ -648,83 +647,83 @@ export interface FunctionExpression extends Node {
   typeParameters?: TypeParameterDeclaration;
 }
 
-export interface Identifier extends Node {
+export interface Identifier extends BaseNode {
   type: "Identifier";
   name: string;
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface IfStatement extends Node {
+export interface IfStatement extends BaseNode {
   type: "IfStatement";
   test: Expression;
   consequent: Statement;
   alternate: Statement;
 }
 
-export interface LabeledStatement extends Node {
+export interface LabeledStatement extends BaseNode {
   type: "LabeledStatement";
   label: Identifier;
   body: Statement;
 }
 
-export interface StringLiteral extends Node {
+export interface StringLiteral extends BaseNode {
   type: "StringLiteral";
   value: string;
 }
 
-export interface NumericLiteral extends Node {
+export interface NumericLiteral extends BaseNode {
   type: "NumericLiteral";
   value: number;
 }
 
-export interface NullLiteral extends Node {
+export interface NullLiteral extends BaseNode {
   type: "NullLiteral";
 }
 
-export interface BooleanLiteral extends Node {
+export interface BooleanLiteral extends BaseNode {
   type: "BooleanLiteral";
   value: boolean;
 }
 
-export interface RegExpLiteral extends Node {
+export interface RegExpLiteral extends BaseNode {
   type: "RegExpLiteral";
   pattern: string;
   flags?: string;
 }
 
-export interface LogicalExpression extends Node {
+export interface LogicalExpression extends BaseNode {
   type: "LogicalExpression";
   operator: "||" | "&&";
   left: Expression;
   right: Expression;
 }
 
-export interface MemberExpression extends Node {
+export interface MemberExpression extends BaseNode {
   type: "MemberExpression";
   object: Expression | Super;
   property: Expression;
   computed: boolean;
 }
 
-export interface NewExpression extends Node {
+export interface NewExpression extends BaseNode {
   type: "NewExpression";
   callee: Expression | Super;
   arguments: Array<Expression | SpreadElement>;
 }
 
-export interface Program extends Node {
+export interface Program extends BaseNode {
   type: "Program";
   sourceType: "script" | "module";
   directives?: Directive[];
   body: Array<Statement | ModuleDeclaration>;
 }
 
-export interface ObjectExpression extends Node {
+export interface ObjectExpression extends BaseNode {
   type: "ObjectExpression";
   properties: Array<ObjectProperty | ObjectMethod | SpreadProperty>;
 }
 
-export interface ObjectMethod extends Node {
+export interface ObjectMethod extends BaseNode {
   type: "ObjectMethod";
   key: Expression;
   kind: "get" | "set" | "method";
@@ -741,7 +740,7 @@ export interface ObjectMethod extends Node {
   typeParameters?: TypeParameterDeclaration;
 }
 
-export interface ObjectProperty extends Node {
+export interface ObjectProperty extends BaseNode {
   type: "ObjectProperty";
   key: Expression;
   computed: boolean;
@@ -750,101 +749,101 @@ export interface ObjectProperty extends Node {
   shorthand: boolean;
 }
 
-export interface RestElement extends Node {
+export interface RestElement extends BaseNode {
   type: "RestElement";
   argument: LVal;
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface ReturnStatement extends Node {
+export interface ReturnStatement extends BaseNode {
   type: "ReturnStatement";
   argument: Expression;
 }
 
-export interface SequenceExpression extends Node {
+export interface SequenceExpression extends BaseNode {
   type: "SequenceExpression";
   expressions: Expression[];
 }
 
-export interface SwitchCase extends Node {
+export interface SwitchCase extends BaseNode {
   type: "SwitchCase";
   test: Expression;
   consequent: Statement[];
 }
 
-export interface SwitchStatement extends Node {
+export interface SwitchStatement extends BaseNode {
   type: "SwitchStatement";
   discriminant: Expression;
   cases: SwitchCase[];
 }
 
-export interface ThisExpression extends Node {
+export interface ThisExpression extends BaseNode {
   type: "ThisExpression";
 }
 
-export interface ThrowStatement extends Node {
+export interface ThrowStatement extends BaseNode {
   type: "ThrowStatement";
   argument: Expression;
 }
 
-export interface TryStatement extends Node {
+export interface TryStatement extends BaseNode {
   type: "TryStatement";
   block: BlockStatement;
   handler: CatchClause;
   finalizer: BlockStatement;
 }
 
-export interface UnaryExpression extends Node {
+export interface UnaryExpression extends BaseNode {
   type: "UnaryExpression";
   operator: "-" | "+" | "!" | "~" | "typeof" | "void" | "delete";
   prefix: boolean;
   argument: Expression;
 }
 
-export interface UpdateExpression extends Node {
+export interface UpdateExpression extends BaseNode {
   type: "UpdateExpression";
   operator: "++" | "--";
   prefix: boolean;
   argument: Expression;
 }
 
-export interface VariableDeclaration extends Node {
+export interface VariableDeclaration extends BaseNode {
   type: "VariableDeclaration";
   declarations: VariableDeclarator[];
   kind: "var" | "let" | "const";
 }
 
-export interface VariableDeclarator extends Node {
+export interface VariableDeclarator extends BaseNode {
   type: "VariableDeclarator";
   id: LVal;
   init: Expression;
 }
 
-export interface WhileStatement extends Node {
+export interface WhileStatement extends BaseNode {
   type: "WhileStatement";
   test: Expression;
   body: Statement;
 }
 
-export interface WithStatement extends Node {
+export interface WithStatement extends BaseNode {
   type: "WithStatement";
   object: Expression;
   body: BlockStatement | Statement;
 }
 
-export interface AssignmentPattern extends Node {
+export interface AssignmentPattern extends BaseNode {
   type: "AssignmentPattern";
   left: Identifier;
   right: Expression;
 }
 
-export interface ArrayPattern extends Node {
+export interface ArrayPattern extends BaseNode {
   type: "ArrayPattern";
   elements: Array<Expression>;
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface ArrowFunctionExpression extends Node {
+export interface ArrowFunctionExpression extends BaseNode {
   type: "ArrowFunctionExpression";
   id: Identifier;
   params: Array<LVal>;
@@ -856,12 +855,12 @@ export interface ArrowFunctionExpression extends Node {
   typeParameters?: TypeParameterDeclaration;
 }
 
-export interface ClassBody extends Node {
+export interface ClassBody extends BaseNode {
   type: "ClassBody";
   body: Array<ClassMethod | ClassProperty>;
 }
 
-export interface ClassDeclaration extends Node {
+export interface ClassDeclaration extends BaseNode {
   type: "ClassDeclaration";
   id: Identifier;
   superClass: Expression;
@@ -873,7 +872,7 @@ export interface ClassDeclaration extends Node {
   superTypeParameters?: TypeParameterInstantiation;
 }
 
-export interface ClassExpression extends Node {
+export interface ClassExpression extends BaseNode {
   type: "ClassExpression";
   id: Identifier;
   superClass: Expression;
@@ -885,66 +884,66 @@ export interface ClassExpression extends Node {
   superTypeParameters?: TypeParameterInstantiation;
 }
 
-export interface ExportAllDeclaration extends Node {
+export interface ExportAllDeclaration extends BaseNode {
   type: "ExportAllDeclaration";
   source: StringLiteral;
 }
 
-export interface ExportDefaultDeclaration extends Node {
+export interface ExportDefaultDeclaration extends BaseNode {
   type: "ExportDefaultDeclaration";
   declaration: Declaration | Expression;
 }
 
-export interface ExportNamedDeclaration extends Node {
+export interface ExportNamedDeclaration extends BaseNode {
   type: "ExportNamedDeclaration";
   declaration: Declaration;
   specifiers: ExportSpecifier[];
   source: StringLiteral;
 }
 
-export interface ExportSpecifier extends Node {
+export interface ExportSpecifier extends BaseNode {
   type: "ExportSpecifier";
   local: Identifier;
   imported: Identifier;
   exported: Identifier;
 }
 
-export interface ForOfStatement extends Node {
+export interface ForOfStatement extends BaseNode {
   type: "ForOfStatement";
   left: VariableDeclaration | LVal;
   right: Expression;
   body: Statement;
 }
 
-export interface ImportDeclaration extends Node {
+export interface ImportDeclaration extends BaseNode {
   type: "ImportDeclaration";
   specifiers: Array<ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier>;
   source: StringLiteral;
 }
 
-export interface ImportDefaultSpecifier extends Node {
+export interface ImportDefaultSpecifier extends BaseNode {
   type: "ImportDefaultSpecifier";
   local: Identifier;
 }
 
-export interface ImportNamespaceSpecifier extends Node {
+export interface ImportNamespaceSpecifier extends BaseNode {
   type: "ImportNamespaceSpecifier";
   local: Identifier;
 }
 
-export interface ImportSpecifier extends Node {
+export interface ImportSpecifier extends BaseNode {
   type: "ImportSpecifier";
   local: Identifier;
   imported: Identifier;
 }
 
-export interface MetaProperty extends Node {
+export interface MetaProperty extends BaseNode {
   type: "MetaProperty";
   meta: Identifier;
   property: Identifier;
 }
 
-export interface ClassMethod extends Node {
+export interface ClassMethod extends BaseNode {
   type: "ClassMethod";
   key: Expression;
   value?: FunctionExpression;
@@ -963,7 +962,7 @@ export interface ClassMethod extends Node {
 }
 
 // See: https://github.com/babel/babel/blob/master/doc/ast/spec.md#objectpattern
-export interface AssignmentProperty extends Node {
+export interface AssignmentProperty extends BaseNode {
   type: "ObjectProperty";
   key: Expression;
   computed: boolean;
@@ -972,28 +971,28 @@ export interface AssignmentProperty extends Node {
   shorthand: boolean;
 }
 
-export interface ObjectPattern extends Node {
+export interface ObjectPattern extends BaseNode {
   type: "ObjectPattern";
   properties: Array<AssignmentProperty | RestProperty>;
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface SpreadElement extends Node {
+export interface SpreadElement extends BaseNode {
   type: "SpreadElement";
   argument: Expression;
 }
 
-export interface Super extends Node {
+export interface Super extends BaseNode {
   type: "Super";
 }
 
-export interface TaggedTemplateExpression extends Node {
+export interface TaggedTemplateExpression extends BaseNode {
   type: "TaggedTemplateExpression";
   tag: Expression;
   quasi: TemplateLiteral;
 }
 
-export interface TemplateElement extends Node {
+export interface TemplateElement extends BaseNode {
   type: "TemplateElement";
   tail: boolean;
   value: {
@@ -1002,46 +1001,46 @@ export interface TemplateElement extends Node {
   };
 }
 
-export interface TemplateLiteral extends Node {
+export interface TemplateLiteral extends BaseNode {
   type: "TemplateLiteral";
   quasis: TemplateElement[];
   expressions: Expression[];
 }
 
-export interface YieldExpression extends Node {
+export interface YieldExpression extends BaseNode {
   type: "YieldExpression";
   argument: Expression;
   delegate: boolean;
 }
 
-export interface AnyTypeAnnotation extends Node {
+export interface AnyTypeAnnotation extends BaseNode {
   type: "AnyTypeAnnotation";
 }
 
-export interface ArrayTypeAnnotation extends Node {
+export interface ArrayTypeAnnotation extends BaseNode {
   type: "ArrayTypeAnnotation";
   elementType: FlowTypeAnnotation;
 }
 
-export interface BooleanTypeAnnotation extends Node {
+export interface BooleanTypeAnnotation extends BaseNode {
   type: "BooleanTypeAnnotation";
 }
 
-export interface BooleanLiteralTypeAnnotation extends Node {
+export interface BooleanLiteralTypeAnnotation extends BaseNode {
   type: "BooleanLiteralTypeAnnotation";
 }
 
-export interface NullLiteralTypeAnnotation extends Node {
+export interface NullLiteralTypeAnnotation extends BaseNode {
   type: "NullLiteralTypeAnnotation";
 }
 
-export interface ClassImplements extends Node {
+export interface ClassImplements extends BaseNode {
   type: "ClassImplements";
   id: Identifier;
   typeParameters: TypeParameterInstantiation;
 }
 
-export interface ClassProperty extends Node {
+export interface ClassProperty extends BaseNode {
   type: "ClassProperty";
   key: Identifier;
   value: Expression;
@@ -1049,7 +1048,7 @@ export interface ClassProperty extends Node {
   typeAnnotation?: TypeAnnotation;
 }
 
-export interface DeclareClass extends Node {
+export interface DeclareClass extends BaseNode {
   type: "DeclareClass";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
@@ -1057,12 +1056,12 @@ export interface DeclareClass extends Node {
   body: ObjectTypeAnnotation;
 }
 
-export interface DeclareFunction extends Node {
+export interface DeclareFunction extends BaseNode {
   type: "DeclareFunction";
   id: Identifier;
 }
 
-export interface DeclareInterface extends Node {
+export interface DeclareInterface extends BaseNode {
   type: "DeclareInterface";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
@@ -1070,29 +1069,29 @@ export interface DeclareInterface extends Node {
   body: ObjectTypeAnnotation;
 }
 
-export interface DeclareModule extends Node {
+export interface DeclareModule extends BaseNode {
   type: "DeclareModule";
   id: StringLiteral | Identifier;
   body: BlockStatement;
 }
 
-export interface DeclareTypeAlias extends Node {
+export interface DeclareTypeAlias extends BaseNode {
   type: "DeclareTypeAlias";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
   right: FlowTypeAnnotation;
 }
 
-export interface DeclareVariable extends Node {
+export interface DeclareVariable extends BaseNode {
   type: "DeclareVariable";
   id: Identifier;
 }
 
-export interface ExistentialTypeParam extends Node {
+export interface ExistentialTypeParam extends BaseNode {
   type: "ExistentialTypeParam";
 }
 
-export interface FunctionTypeAnnotation extends Node {
+export interface FunctionTypeAnnotation extends BaseNode {
   type: "FunctionTypeAnnotation";
   typeParameters: TypeParameterDeclaration;
   params: FunctionTypeParam[];
@@ -1100,25 +1099,25 @@ export interface FunctionTypeAnnotation extends Node {
   returnType: FlowTypeAnnotation;
 }
 
-export interface FunctionTypeParam extends Node {
+export interface FunctionTypeParam extends BaseNode {
   type: "FunctionTypeParam";
   name: Identifier;
   typeAnnotation: FlowTypeAnnotation;
 }
 
-export interface GenericTypeAnnotation extends Node {
+export interface GenericTypeAnnotation extends BaseNode {
   type: "GenericTypeAnnotation";
   id: Identifier;
   typeParameters: TypeParameterInstantiation;
 }
 
-export interface InterfaceExtends extends Node {
+export interface InterfaceExtends extends BaseNode {
   type: "InterfaceExtends";
   id: Identifier;
   typeParameters: TypeParameterInstantiation;
 }
 
-export interface InterfaceDeclaration extends Node {
+export interface InterfaceDeclaration extends BaseNode {
   type: "InterfaceDeclaration";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
@@ -1127,130 +1126,130 @@ export interface InterfaceDeclaration extends Node {
   body: ObjectTypeAnnotation;
 }
 
-export interface IntersectionTypeAnnotation extends Node {
+export interface IntersectionTypeAnnotation extends BaseNode {
   type: "IntersectionTypeAnnotation";
   types: FlowTypeAnnotation[];
 }
 
-export interface MixedTypeAnnotation extends Node {
+export interface MixedTypeAnnotation extends BaseNode {
   type: "MixedTypeAnnotation";
 }
 
-export interface NullableTypeAnnotation extends Node {
+export interface NullableTypeAnnotation extends BaseNode {
   type: "NullableTypeAnnotation";
   typeAnnotation: FlowTypeAnnotation;
 }
 
-export interface NumericLiteralTypeAnnotation extends Node {
+export interface NumericLiteralTypeAnnotation extends BaseNode {
   type: "NumericLiteralTypeAnnotation";
 }
 
-export interface NumberTypeAnnotation extends Node {
+export interface NumberTypeAnnotation extends BaseNode {
   type: "NumberTypeAnnotation";
 }
 
-export interface StringLiteralTypeAnnotation extends Node {
+export interface StringLiteralTypeAnnotation extends BaseNode {
   type: "StringLiteralTypeAnnotation";
 }
 
-export interface StringTypeAnnotation extends Node {
+export interface StringTypeAnnotation extends BaseNode {
   type: "StringTypeAnnotation";
 }
 
-export interface ThisTypeAnnotation extends Node {
+export interface ThisTypeAnnotation extends BaseNode {
   type: "ThisTypeAnnotation";
 }
 
-export interface TupleTypeAnnotation extends Node {
+export interface TupleTypeAnnotation extends BaseNode {
   type: "TupleTypeAnnotation";
   types: FlowTypeAnnotation[];
 }
 
-export interface TypeofTypeAnnotation extends Node {
+export interface TypeofTypeAnnotation extends BaseNode {
   type: "TypeofTypeAnnotation";
   argument: FlowTypeAnnotation;
 }
 
-export interface TypeAlias extends Node {
+export interface TypeAlias extends BaseNode {
   type: "TypeAlias";
   id: Identifier;
   typeParameters: TypeParameterDeclaration;
   right: FlowTypeAnnotation;
 }
 
-export interface TypeAnnotation extends Node {
+export interface TypeAnnotation extends BaseNode {
   type: "TypeAnnotation";
   typeAnnotation: FlowTypeAnnotation;
 }
 
-export interface TypeCastExpression extends Node {
+export interface TypeCastExpression extends BaseNode {
   type: "TypeCastExpression";
   expression: Expression;
   typeAnnotation: FlowTypeAnnotation;
 }
 
-export interface TypeParameterDeclaration extends Node {
+export interface TypeParameterDeclaration extends BaseNode {
   type: "TypeParameterDeclaration";
   params: Identifier[];
 }
 
-export interface TypeParameterInstantiation extends Node {
+export interface TypeParameterInstantiation extends BaseNode {
   type: "TypeParameterInstantiation";
   params: FlowTypeAnnotation[];
 }
 
-export interface ObjectTypeAnnotation extends Node {
+export interface ObjectTypeAnnotation extends BaseNode {
   type: "ObjectTypeAnnotation";
   properties: ObjectTypeProperty[];
   indexers: ObjectTypeIndexer[];
   callProperties: ObjectTypeCallProperty[];
 }
 
-export interface ObjectTypeCallProperty extends Node {
+export interface ObjectTypeCallProperty extends BaseNode {
   type: "ObjectTypeCallProperty";
   value: FlowTypeAnnotation;
 }
 
-export interface ObjectTypeIndexer extends Node {
+export interface ObjectTypeIndexer extends BaseNode {
   type: "ObjectTypeIndexer";
   id: Expression;
   key: FlowTypeAnnotation;
   value: FlowTypeAnnotation;
 }
 
-export interface ObjectTypeProperty extends Node {
+export interface ObjectTypeProperty extends BaseNode {
   type: "ObjectTypeProperty";
   key: Expression;
   value: FlowTypeAnnotation;
 }
 
-export interface QualifiedTypeIdentifier extends Node {
+export interface QualifiedTypeIdentifier extends BaseNode {
   type: "QualifiedTypeIdentifier";
   id: Identifier;
   qualification: Identifier | QualifiedTypeIdentifier;
 }
 
-export interface UnionTypeAnnotation extends Node {
+export interface UnionTypeAnnotation extends BaseNode {
   type: "UnionTypeAnnotation";
   types: FlowTypeAnnotation[];
 }
 
-export interface VoidTypeAnnotation extends Node {
+export interface VoidTypeAnnotation extends BaseNode {
   type: "VoidTypeAnnotation";
 }
 
-export interface JSXAttribute extends Node {
+export interface JSXAttribute extends BaseNode {
   type: "JSXAttribute";
   name: JSXIdentifier | JSXNamespacedName;
   value: JSXElement | StringLiteral | JSXExpressionContainer;
 }
 
-export interface JSXClosingElement extends Node {
+export interface JSXClosingElement extends BaseNode {
   type: "JSXClosingElement";
   name: JSXIdentifier | JSXMemberExpression;
 }
 
-export interface JSXElement extends Node {
+export interface JSXElement extends BaseNode {
   type: "JSXElement";
   openingElement: JSXOpeningElement;
   closingElement: JSXClosingElement;
@@ -1258,99 +1257,100 @@ export interface JSXElement extends Node {
   selfClosing?: boolean;
 }
 
-export interface JSXEmptyExpression extends Node {
+export interface JSXEmptyExpression extends BaseNode {
   type: "JSXEmptyExpression";
 }
 
-export interface JSXExpressionContainer extends Node {
+export interface JSXExpressionContainer extends BaseNode {
   type: "JSXExpressionContainer";
   expression: Expression;
 }
 
-export interface JSXIdentifier extends Node {
+export interface JSXIdentifier extends BaseNode {
   type: "JSXIdentifier";
   name: string;
 }
 
-export interface JSXMemberExpression extends Node {
+export interface JSXMemberExpression extends BaseNode {
   type: "JSXMemberExpression";
   object: JSXMemberExpression | JSXIdentifier;
   property: JSXIdentifier;
 }
 
-export interface JSXNamespacedName extends Node {
+export interface JSXNamespacedName extends BaseNode {
   type: "JSXNamespacedName";
   namespace: JSXIdentifier;
   name: JSXIdentifier;
 }
 
-export interface JSXOpeningElement extends Node {
+export interface JSXOpeningElement extends BaseNode {
   type: "JSXOpeningElement";
   name: JSXIdentifier | JSXMemberExpression;
   selfClosing: boolean;
   attributes: JSXAttribute[];
 }
 
-export interface JSXSpreadAttribute extends Node {
+export interface JSXSpreadAttribute extends BaseNode {
   type: "JSXSpreadAttribute";
   argument: Expression;
 }
 
-export interface JSXText extends Node {
+export interface JSXText extends BaseNode {
   type: "JSXText";
   value: string;
 }
 
-export interface Noop extends Node {
+export interface Noop extends BaseNode {
   type: "Noop";
 }
 
-export interface ParenthesizedExpression extends Node {
+export interface ParenthesizedExpression extends BaseNode {
   type: "ParenthesizedExpression";
   expression: Expression;
 }
 
-export interface AwaitExpression extends Node {
+export interface AwaitExpression extends BaseNode {
   type: "AwaitExpression";
   argument: Expression;
 }
 
-export interface BindExpression extends Node {
+export interface BindExpression extends BaseNode {
   type: "BindExpression";
   object: Expression;
   callee: Expression;
 }
 
-export interface Decorator extends Node {
+export interface Decorator extends BaseNode {
   type: "Decorator";
   expression: Expression;
 }
 
-export interface DoExpression extends Node {
+export interface DoExpression extends BaseNode {
   type: "DoExpression";
   body: BlockStatement;
 }
 
-export interface ExportDefaultSpecifier extends Node {
+export interface ExportDefaultSpecifier extends BaseNode {
   type: "ExportDefaultSpecifier";
   exported: Identifier;
 }
 
-export interface ExportNamespaceSpecifier extends Node {
+export interface ExportNamespaceSpecifier extends BaseNode {
   type: "ExportNamespaceSpecifier";
   exported: Identifier;
 }
 
-export interface RestProperty extends Node {
+export interface RestProperty extends BaseNode {
   type: "RestProperty";
   argument: LVal;
 }
 
-export interface SpreadProperty extends Node {
+export interface SpreadProperty extends BaseNode {
   type: "SpreadProperty";
   argument: Expression;
 }
 
+export type Node = ArrayExpression | AssignmentExpression | BinaryExpression | Directive | DirectiveLiteral | BlockStatement | BreakStatement | CallExpression | CatchClause | ConditionalExpression | ContinueStatement | DebuggerStatement | DoWhileStatement | EmptyStatement | ExpressionStatement | File | ForInStatement | ForStatement | FunctionDeclaration | FunctionExpression | Identifier | IfStatement | LabeledStatement | StringLiteral | NumericLiteral | NullLiteral | BooleanLiteral | RegExpLiteral | LogicalExpression | MemberExpression | NewExpression | Program | ObjectExpression | ObjectMethod | ObjectProperty | RestElement | ReturnStatement | SequenceExpression | SwitchCase | SwitchStatement | ThisExpression | ThrowStatement | TryStatement | UnaryExpression | UpdateExpression | VariableDeclaration | VariableDeclarator | WhileStatement | WithStatement | AssignmentPattern | ArrayPattern | ArrowFunctionExpression | ClassBody | ClassDeclaration | ClassExpression | ExportAllDeclaration | ExportDefaultDeclaration | ExportNamedDeclaration | ExportSpecifier | ForOfStatement | ImportDeclaration | ImportDefaultSpecifier | ImportNamespaceSpecifier | ImportSpecifier | MetaProperty | ClassMethod | AssignmentProperty | ObjectPattern | SpreadElement | Super | TaggedTemplateExpression | TemplateElement | TemplateLiteral | YieldExpression | AnyTypeAnnotation | ArrayTypeAnnotation | BooleanTypeAnnotation | BooleanLiteralTypeAnnotation | NullLiteralTypeAnnotation | ClassImplements | ClassProperty | DeclareClass | DeclareFunction | DeclareInterface | DeclareModule | DeclareTypeAlias | DeclareVariable | ExistentialTypeParam | FunctionTypeAnnotation | FunctionTypeParam | GenericTypeAnnotation | InterfaceExtends | InterfaceDeclaration | IntersectionTypeAnnotation | MixedTypeAnnotation | NullableTypeAnnotation | NumericLiteralTypeAnnotation | NumberTypeAnnotation | StringLiteralTypeAnnotation | StringTypeAnnotation | ThisTypeAnnotation | TupleTypeAnnotation | TypeofTypeAnnotation | TypeAlias | TypeAnnotation | TypeCastExpression | TypeParameterDeclaration | TypeParameterInstantiation | ObjectTypeAnnotation | ObjectTypeCallProperty | ObjectTypeIndexer | ObjectTypeProperty | QualifiedTypeIdentifier | UnionTypeAnnotation | VoidTypeAnnotation | JSXAttribute | JSXClosingElement | JSXElement | JSXEmptyExpression | JSXExpressionContainer | JSXIdentifier | JSXMemberExpression | JSXNamespacedName | JSXOpeningElement | JSXSpreadAttribute | JSXText | Noop | ParenthesizedExpression | AwaitExpression | BindExpression | Decorator | DoExpression | ExportDefaultSpecifier | ExportNamespaceSpecifier | RestProperty | SpreadProperty;
 export type Expression = ArrayExpression | AssignmentExpression | BinaryExpression | CallExpression | ConditionalExpression | FunctionExpression | Identifier | StringLiteral | NumericLiteral | BooleanLiteral | NullLiteral | RegExpLiteral | LogicalExpression | MemberExpression | NewExpression | ObjectExpression | SequenceExpression | ThisExpression | UnaryExpression | UpdateExpression | ArrowFunctionExpression | ClassExpression | MetaProperty | Super | TaggedTemplateExpression | TemplateLiteral | YieldExpression | TypeCastExpression | JSXElement | JSXEmptyExpression | JSXIdentifier | JSXMemberExpression | ParenthesizedExpression | AwaitExpression | BindExpression | DoExpression;
 export type Binary = BinaryExpression | LogicalExpression;
 export type Scopable = BlockStatement | CatchClause | DoWhileStatement | ForInStatement | ForStatement | FunctionDeclaration | FunctionExpression | Program | ObjectMethod | SwitchStatement | WhileStatement | ArrowFunctionExpression | ClassDeclaration | ClassExpression | ForOfStatement | ClassMethod;
@@ -1940,4 +1940,3 @@ export type Types = {
   assertNumberLiteral(node: Object, opts?: Object): void;
   assertRegexLiteral(node: Object, opts?: Object): void;
 }
-*/
