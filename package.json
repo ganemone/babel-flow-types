@@ -1,12 +1,14 @@
 {
   "name": "@ganemone/babel-flow-types",
-  "version": "1.2.3",
+  "version": "2.0.0",
   "description": "Flow types for all things Babel",
   "main": "index.js",
   "repository": "babel-utils/babel-flow-types",
   "author": "James Kyle <me@thejameskyle.com>",
   "license": "MIT",
-  "files": ["index.js"],
+  "files": [
+    "index.js"
+  ],
   "devDependencies": {
     "flow-bin": "^0.95.1"
   },
