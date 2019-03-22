@@ -263,7 +263,7 @@ export interface BabelPath<T> {
   inList: boolean,
   parentKey: ?string,
   key: ?string,
-  node: ?Object,
+  node: T,
   scope: BabelScope,
   type: string,
   typeAnnotation: ?Object,
