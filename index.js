@@ -980,6 +980,7 @@ export type ImportDeclaration = {
   type: "ImportDeclaration";
   specifiers: Array<ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier>;
   source: StringLiteral;
+  importKind: "type" | "value";
 }
 
 export type ImportDefaultSpecifier = { 
@@ -999,6 +1000,7 @@ export type ImportSpecifier = {
   type: "ImportSpecifier";
   local: Identifier;
   imported: Identifier;
+  importKind: "type" | "value" | null
 }
 
 export type MetaProperty = { 
