@@ -1,6 +1,6 @@
 {
   "name": "@ganemone/babel-flow-types",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Flow types for all things Babel",
   "main": "index.js",
   "repository": "babel-utils/babel-flow-types",
