@@ -203,10 +203,146 @@ export interface BabelTraverse {
   copyCache(source: Object, destination: Object): void,
 }
 
-export type BabelVisitorMethod = (path: BabelPath<Node>, state: BabelPluginPass) => mixed;
+export type BabelVisitorMethod<T> = (path: BabelPath<T>, state: BabelPluginPass) => mixed;
+// TODO: The current types don't support enter and exit methods. We have yet to see a use case for this, and this makes the experience
+// of typing visitors much improved for the standard use case.
+// export type BabelVisitorMethod<T> = { enter?: BaseVisitorMethod<T>, exit?: BaseVisitorMethod<T> } | BaseVisitorMethod<T>;
+// export type BaseVisitorMethod<T> = (path: BabelPath<T>, state: BabelPluginPass) => mixed;
 
 export type BabelVisitor = {
-  [key: string]: { enter?: BabelVisitorMethod, exit?: BabelVisitorMethod } | BabelVisitorMethod,
+  ArrayExpression?: BabelVisitorMethod<ArrayExpression>;
+  AssignmentExpression?: BabelVisitorMethod<AssignmentExpression>;
+  BinaryExpression?: BabelVisitorMethod<BinaryExpression>;
+  Directive?: BabelVisitorMethod<Directive>;
+  DirectiveLiteral?: BabelVisitorMethod<DirectiveLiteral>;
+  BlockStatement?: BabelVisitorMethod<BlockStatement>;
+  BreakStatement?: BabelVisitorMethod<BreakStatement>;
+  CallExpression?: BabelVisitorMethod<CallExpression>;
+  CatchClause?: BabelVisitorMethod<CatchClause>;
+  ConditionalExpression?: BabelVisitorMethod<ConditionalExpression>;
+  ContinueStatement?: BabelVisitorMethod<ContinueStatement>;
+  DebuggerStatement?: BabelVisitorMethod<DebuggerStatement>;
+  DoWhileStatement?: BabelVisitorMethod<DoWhileStatement>;
+  EmptyStatement?: BabelVisitorMethod<EmptyStatement>;
+  ExpressionStatement?: BabelVisitorMethod<ExpressionStatement>;
+  File?: BabelVisitorMethod<File>;
+  ForInStatement?: BabelVisitorMethod<ForInStatement>;
+  ForStatement?: BabelVisitorMethod<ForStatement>;
+  FunctionDeclaration?: BabelVisitorMethod<FunctionDeclaration>;
+  FunctionExpression?: BabelVisitorMethod<FunctionExpression>;
+  Identifier?: BabelVisitorMethod<Identifier>;
+  IfStatement?: BabelVisitorMethod<IfStatement>;
+  LabeledStatement?: BabelVisitorMethod<LabeledStatement>;
+  StringLiteral?: BabelVisitorMethod<StringLiteral>;
+  NumericLiteral?: BabelVisitorMethod<NumericLiteral>;
+  NullLiteral?: BabelVisitorMethod<NullLiteral>;
+  BooleanLiteral?: BabelVisitorMethod<BooleanLiteral>;
+  RegExpLiteral?: BabelVisitorMethod<RegExpLiteral>;
+  LogicalExpression?: BabelVisitorMethod<LogicalExpression>;
+  MemberExpression?: BabelVisitorMethod<MemberExpression>;
+  NewExpression?: BabelVisitorMethod<NewExpression>;
+  Program?: BabelVisitorMethod<Program>;
+  ObjectExpression?: BabelVisitorMethod<ObjectExpression>;
+  ObjectMethod?: BabelVisitorMethod<ObjectMethod>;
+  ObjectProperty?: BabelVisitorMethod<ObjectProperty>;
+  RestElement?: BabelVisitorMethod<RestElement>;
+  ReturnStatement?: BabelVisitorMethod<ReturnStatement>;
+  SequenceExpression?: BabelVisitorMethod<SequenceExpression>;
+  SwitchCase?: BabelVisitorMethod<SwitchCase>;
+  SwitchStatement?: BabelVisitorMethod<SwitchStatement>;
+  ThisExpression?: BabelVisitorMethod<ThisExpression>;
+  ThrowStatement?: BabelVisitorMethod<ThrowStatement>;
+  TryStatement?: BabelVisitorMethod<TryStatement>;
+  UnaryExpression?: BabelVisitorMethod<UnaryExpression>;
+  UpdateExpression?: BabelVisitorMethod<UpdateExpression>;
+  VariableDeclaration?: BabelVisitorMethod<VariableDeclaration>;
+  VariableDeclarator?: BabelVisitorMethod<VariableDeclarator>;
+  WhileStatement?: BabelVisitorMethod<WhileStatement>;
+  WithStatement?: BabelVisitorMethod<WithStatement>;
+  AssignmentPattern?: BabelVisitorMethod<AssignmentPattern>;
+  ArrayPattern?: BabelVisitorMethod<ArrayPattern>;
+  ArrowFunctionExpression?: BabelVisitorMethod<ArrowFunctionExpression>;
+  ClassBody?: BabelVisitorMethod<ClassBody>;
+  ClassDeclaration?: BabelVisitorMethod<ClassDeclaration>;
+  ClassExpression?: BabelVisitorMethod<ClassExpression>;
+  ExportAllDeclaration?: BabelVisitorMethod<ExportAllDeclaration>;
+  ExportDefaultDeclaration?: BabelVisitorMethod<ExportDefaultDeclaration>;
+  ExportNamedDeclaration?: BabelVisitorMethod<ExportNamedDeclaration>;
+  ExportSpecifier?: BabelVisitorMethod<ExportSpecifier>;
+  ForOfStatement?: BabelVisitorMethod<ForOfStatement>;
+  ImportDeclaration?: BabelVisitorMethod<ImportDeclaration>;
+  ImportDefaultSpecifier?: BabelVisitorMethod<ImportDefaultSpecifier>;
+  ImportNamespaceSpecifier?: BabelVisitorMethod<ImportNamespaceSpecifier>;
+  ImportSpecifier?: BabelVisitorMethod<ImportSpecifier>;
+  MetaProperty?: BabelVisitorMethod<MetaProperty>;
+  ClassMethod?: BabelVisitorMethod<ClassMethod>;
+  ObjectPattern?: BabelVisitorMethod<ObjectPattern>;
+  SpreadElement?: BabelVisitorMethod<SpreadElement>;
+  TaggedTemplateExpression?: BabelVisitorMethod<TaggedTemplateExpression>;
+  TemplateElement?: BabelVisitorMethod<TemplateElement>;
+  TemplateLiteral?: BabelVisitorMethod<TemplateLiteral>;
+  YieldExpression?: BabelVisitorMethod<YieldExpression>;
+  AnyTypeAnnotation?: BabelVisitorMethod<AnyTypeAnnotation>;
+  ArrayTypeAnnotation?: BabelVisitorMethod<ArrayTypeAnnotation>;
+  BooleanTypeAnnotation?: BabelVisitorMethod<BooleanTypeAnnotation>;
+  BooleanLiteralTypeAnnotation?: BabelVisitorMethod<BooleanLiteralTypeAnnotation>;
+  NullLiteralTypeAnnotation?: BabelVisitorMethod<NullLiteralTypeAnnotation>;
+  ClassImplements?: BabelVisitorMethod<ClassImplements>;
+  ClassProperty?: BabelVisitorMethod<ClassProperty>;
+  DeclareClass?: BabelVisitorMethod<DeclareClass>;
+  DeclareFunction?: BabelVisitorMethod<DeclareFunction>;
+  DeclareInterface?: BabelVisitorMethod<DeclareInterface>;
+  DeclareModule?: BabelVisitorMethod<DeclareModule>;
+  DeclareTypeAlias?: BabelVisitorMethod<DeclareTypeAlias>;
+  DeclareVariable?: BabelVisitorMethod<DeclareVariable>;
+  ExistentialTypeParam?: BabelVisitorMethod<ExistentialTypeParam>;
+  FunctionTypeAnnotation?: BabelVisitorMethod<FunctionTypeAnnotation>;
+  FunctionTypeParam?: BabelVisitorMethod<FunctionTypeParam>;
+  GenericTypeAnnotation?: BabelVisitorMethod<GenericTypeAnnotation>;
+  InterfaceExtends?: BabelVisitorMethod<InterfaceExtends>;
+  InterfaceDeclaration?: BabelVisitorMethod<InterfaceDeclaration>;
+  IntersectionTypeAnnotation?: BabelVisitorMethod<IntersectionTypeAnnotation>;
+  MixedTypeAnnotation?: BabelVisitorMethod<MixedTypeAnnotation>;
+  NullableTypeAnnotation?: BabelVisitorMethod<NullableTypeAnnotation>;
+  NumericLiteralTypeAnnotation?: BabelVisitorMethod<NumericLiteralTypeAnnotation>;
+  NumberTypeAnnotation?: BabelVisitorMethod<NumberTypeAnnotation>;
+  StringLiteralTypeAnnotation?: BabelVisitorMethod<StringLiteralTypeAnnotation>;
+  StringTypeAnnotation?: BabelVisitorMethod<StringTypeAnnotation>;
+  ThisTypeAnnotation?: BabelVisitorMethod<ThisTypeAnnotation>;
+  TupleTypeAnnotation?: BabelVisitorMethod<TupleTypeAnnotation>;
+  TypeofTypeAnnotation?: BabelVisitorMethod<TypeofTypeAnnotation>;
+  TypeAlias?: BabelVisitorMethod<TypeAlias>;
+  TypeAnnotation?: BabelVisitorMethod<TypeAnnotation>;
+  TypeCastExpression?: BabelVisitorMethod<TypeCastExpression>;
+  TypeParameterDeclaration?: BabelVisitorMethod<TypeParameterDeclaration>;
+  TypeParameterInstantiation?: BabelVisitorMethod<TypeParameterInstantiation>;
+  ObjectTypeAnnotation?: BabelVisitorMethod<ObjectTypeAnnotation>;
+  ObjectTypeCallProperty?: BabelVisitorMethod<ObjectTypeCallProperty>;
+  ObjectTypeIndexer?: BabelVisitorMethod<ObjectTypeIndexer>;
+  ObjectTypeProperty?: BabelVisitorMethod<ObjectTypeProperty>;
+  QualifiedTypeIdentifier?: BabelVisitorMethod<QualifiedTypeIdentifier>;
+  UnionTypeAnnotation?: BabelVisitorMethod<UnionTypeAnnotation>;
+  VoidTypeAnnotation?: BabelVisitorMethod<VoidTypeAnnotation>;
+  JSXAttribute?: BabelVisitorMethod<JSXAttribute>;
+  JSXClosingElement?: BabelVisitorMethod<JSXClosingElement>;
+  JSXElement?: BabelVisitorMethod<JSXElement>;
+  JSXEmptyExpression?: BabelVisitorMethod<JSXEmptyExpression>;
+  JSXExpressionContainer?: BabelVisitorMethod<JSXExpressionContainer>;
+  JSXIdentifier?: BabelVisitorMethod<JSXIdentifier>;
+  JSXMemberExpression?: BabelVisitorMethod<JSXMemberExpression>;
+  JSXNamespacedName?: BabelVisitorMethod<JSXNamespacedName>;
+  JSXOpeningElement?: BabelVisitorMethod<JSXOpeningElement>;
+  JSXSpreadAttribute?: BabelVisitorMethod<JSXSpreadAttribute>;
+  JSXText?: BabelVisitorMethod<JSXText>;
+  ParenthesizedExpression?: BabelVisitorMethod<ParenthesizedExpression>;
+  AwaitExpression?: BabelVisitorMethod<AwaitExpression>;
+  BindExpression?: BabelVisitorMethod<BindExpression>;
+  Decorator?: BabelVisitorMethod<Decorator>;
+  DoExpression?: BabelVisitorMethod<DoExpression>;
+  ExportDefaultSpecifier?: BabelVisitorMethod<ExportDefaultSpecifier>;
+  ExportNamespaceSpecifier?: BabelVisitorMethod<ExportNamespaceSpecifier>;
+  RestProperty?: BabelVisitorMethod<RestProperty>;
+  SpreadProperty?: BabelVisitorMethod<SpreadProperty>;
 };
 
 type BabelVisitorVerify = (visitor: BabelVisitor) => void;
@@ -280,7 +416,7 @@ export type BabelPath<T> = {
   getData(key: string, def?: any): any,
 
   buildCodeFrameError(msg: string, error?: Class<Error>): Error,
-  traverse(visitor: Object, state?: any): void,
+  traverse(visitor: BabelVisitor, state?: any): void,
   mark(type: string, message: string): void,
   set(key: string, node: Node): void,
   getPathLocation(): string,
@@ -572,6 +708,7 @@ export type CallExpression = {
   type: "CallExpression";
   callee: Expression | Super;
   arguments: Array<Expression | SpreadElement>;
+  typeArguments?: TypeParameterInstantiation
 }
 
 export type CatchClause = { 
@@ -987,12 +1124,14 @@ export type ImportDefaultSpecifier = {
   ...BaseNode,
   type: "ImportDefaultSpecifier";
   local: Identifier;
+  importKind: null;
 }
 
 export type ImportNamespaceSpecifier = { 
   ...BaseNode,
   type: "ImportNamespaceSpecifier";
   local: Identifier;
+  importKind: null;
 }
 
 export type ImportSpecifier = { 
@@ -1000,7 +1139,7 @@ export type ImportSpecifier = {
   type: "ImportSpecifier";
   local: Identifier;
   imported: Identifier;
-  importKind: "type" | "value" | null
+  importKind: "type" | "value" | null;
 }
 
 export type MetaProperty = { 
